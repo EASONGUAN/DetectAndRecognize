@@ -6,17 +6,20 @@ import matplotlib.pyplot as plt
 class HOGExtractor:
 
     def __init__(self, box_size, orientation, pixel_per_cell, cells_per_block, do_trans_sqrt):
-        
+
         self.box_size = (box_size, box_size)
         self.orientation = orientation
         self.pixel_per_cell = (pixel_per_cell, pixel_per_cell)
         self.cells_per_block = (cells_per_block, cells_per_block)
         self.do_trans_sqrt = do_trans_sqrt
 
+        self.hue_hog = None
+        self.saturation_hog = None
+        self.lightness_hog = None
 
-    def get_HOG(self, image_path):
 
-        image = cv.imread(image_path)
+    def HOG(self, image):
+
         image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
 
         hue = image[:,:,0]
@@ -61,6 +64,25 @@ class HOGExtractor:
                   'lightness_hog_img': lightness_feature_image}
 
         return output
+
+
+    def get_features(self, image):
+
+        feature = self.HOG(image)
+
+        output = np.hstack((feature['hue_hog'],
+                            feature['saturation_hog'],
+                            feature['lightness_hog']))
+
+        return output
+
+
+#extractor = HOGExtractor(64, 9, 8, 2, True)
+#feature = extractor.get_features("AAA.jpg")
+
+
+
+
 
 
 

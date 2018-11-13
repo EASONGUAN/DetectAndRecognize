@@ -35,9 +35,9 @@ class DataProcessor:
         output = (output_data, output_label)
 
         with open("HogData/" + self.data_label + '.pickle', 'wb') as handle:
+
             pickle.dump(output, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-        print(output)
 
 #processor = DataProcessor("POSITIVE/subcar", "positive")
 #processor.process_dataset()
