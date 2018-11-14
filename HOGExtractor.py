@@ -30,8 +30,6 @@ class HOGExtractor:
         saturation = cv.resize(saturation, self.box_size, interpolation=cv.INTER_AREA)
         lightness = cv.resize(lightness, self.box_size, interpolation=cv.INTER_AREA)
 
-        plt.imshow(lightness)
-
         hue_features, hue_feature_image = hog(hue,
                                               orientations=self.orientation,
                                               pixels_per_cell=self.pixel_per_cell,
@@ -77,8 +75,9 @@ class HOGExtractor:
         return output
 
 
-#extractor = HOGExtractor(64, 9, 8, 2, True)
-#feature = extractor.get_features("AAA.jpg")
+#extractor = HOGExtractor(64, 12, 8, 2, True)
+#image = cv.imread("BBB.png")
+#feature = extractor.get_features(image)
 
 
 
