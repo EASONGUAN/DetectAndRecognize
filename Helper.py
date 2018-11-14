@@ -22,11 +22,15 @@ class DataProcessor:
 
         for image_path in files:
 
-            extractor = HOGExtractor(64, 9, 16, 2, True)
+            print(image_path)
+
+            extractor = HOGExtractor(64, 12, 8, 2, True)
 
             real_path = self.dataset_path + "/" + image_path
 
-            features = extractor.get_features(real_path)
+            image = cv.imread(real_path)
+
+            features = extractor.get_features(image)
 
             output_data.append(list(features))
 
@@ -34,10 +38,10 @@ class DataProcessor:
 
         output = (output_data, output_label)
 
-        with open("HogData/" + self.data_label + '.pickle', 'wb') as handle:
+        with open("HogData/" + "Extras" + '.pickle', 'wb') as handle:
 
             pickle.dump(output, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-#processor = DataProcessor("POSITIVE/subcar", "positive")
-#processor.process_dataset()
+processor = DataProcessor("NEGATIVE/non-vehicle/Extras", "negative")
+processor.process_dataset()

@@ -1,14 +1,9 @@
 import Helper
 from HOGExtractor import HOGExtractor
 from SVM import SVM
-
 import numpy as np
 import cv2 as cv
-import pickle
-import random
-from sklearn.svm import SVC
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
 
 class CarFinder:
     def __init__(self, hogExtractor, svm, windowSize, slide_step):
@@ -26,12 +21,13 @@ class CarFinder:
 
         img = cv.imread(file_name)
 
-        self.windowSizeX = int (img.shape[1] / 10)
-        self.windowSizeY = int (img.shape[0] / 10)
+        self.windowSizeX = int (img.shape[1] / 3)
+        self.windowSizeY = int (img.shape[0] / 3)
         valid_windows = []
+        valid_image= []
         break_sig = 0
-        for bottom_left_x in range(self.windowSizeX, img.shape[1], self.slide_step):
-            for bottom_left_y in range(self.windowSizeY, img.shape[0], self.slide_step):
+        for bottom_left_x in range(self.windowSizeX, img.shape[1], int(img.shape[1] / 6)):
+            for bottom_left_y in range(self.windowSizeY, img.shape[0], int(img.shape[0] / 6)):
 
                 x = (bottom_left_x - self.windowSizeX, bottom_left_x)
                 y = (bottom_left_y - self.windowSizeY, bottom_left_y)
@@ -39,13 +35,16 @@ class CarFinder:
                 if self.window_classfy(x, y, img) == 1:
                     valid_windows.append((x, y))
                     # only get the first image
-                    # img = np.copy(img)[y[0]:y[1], x[0]:x[1], :]
-                    # cv.imwrite('test1.jpg', img)
-                    # break_sig = 1
-                    # break
+                    img = np.copy(img)[y[0]:y[1], x[0]:x[1], :]
+                    print("OK")
+                    plt.imshow(img)
+                    plt.show()
+                    #cv.imwrite('test1.jpg', img)
+                    #break_sig = 1
+                    #break
 
-            # if break_sig == 1:
-            #     break
+            if break_sig == 1:
+                break
 
     def window_classfy(self, x, y, img):
 
@@ -57,10 +56,10 @@ class CarFinder:
             return 0
 
 
-svm = SVM("HogData/positive.pickle", "HogData/negative.pickle")
+svm = SVM("HogData/cars.pickle", "HogData/negative_far.pickle")
 svm.train_svm()
-extractor = HOGExtractor(64, 9, 8, 2, True)
+extractor = HOGExtractor(64, 12, 8, 2, True)
 
 carFinder = CarFinder(extractor,svm, 64, 16)
-carFinder.find_car('test.jpg')
+carFinder.find_car('testC.jpg')
 

@@ -3,29 +3,42 @@ import numpy as np
 from HOGExtractor import HOGExtractor
 import pickle
 import random
-from sklearn.svm import SVC
+from sklearn.svm import SVC, LinearSVC
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
 
 class SVM:
 
-    def __init__(self, positive_datapath, negative_datapath):
+    def __init__(self, positive_datapaths, negative_datapaths):
 
-        self.positive_datapath = positive_datapath
-        self.negative_datapath = negative_datapath
-        self.hog_extractor = HOGExtractor(64, 9, 16, 2, True)
+        self.positive_datapath = positive_datapaths
+        self.negative_datapath = negative_datapaths
+        self.hog_extractor = HOGExtractor(64, 12, 8, 2, True)
         self.svc = None
         self.scaler = None
 
 
     def train_svm(self):
 
-        with open(self.positive_datapath, 'rb') as handle:
-            positive = pickle.load(handle)
+        positive = ([],[])
+        negative = ([],[])
 
-        with open(self.negative_datapath, 'rb') as handle:
-            negative = pickle.load(handle)
+        for path in self.positive_datapath:
+
+            with open(path, 'rb') as handle:
+                temp = pickle.load(handle)
+
+            positive[0] += temp[0]
+            positive[1] += temp[1]
+
+        for path in self.negative_datapath:
+
+            with open(path, 'rb') as handle:
+                temp = pickle.load(handle)
+
+            negative[0] += temp[0]
+            negative[1] += temp[1]
 
         positive_data = np.asarray(positive[0])
         negative_data = np.asarray(negative[0])
@@ -44,7 +57,7 @@ class SVM:
                                                                           test_size=0.2,
                                                                           random_state=random.randint(1, 100))
 
-        svc = SVC(gamma='scale')
+        svc = LinearSVC()
         svc.fit(train_data, train_label)
 
         score = svc.score(test_data, test_label)
@@ -67,10 +80,10 @@ class SVM:
         return result
 
 
-#svm = SVM("HogData/positive.pickle", "HogData/negative.pickle")
-#svm.train_svm()
-#image = cv2.imread("DD.jpg")
-#svm.classify(image)
+svm = SVM("HogData/positive.pickle", "HogData/scenery.pickle")
+svm.train_svm()
+image = cv2.imread("HAHA.jpg")
+svm.classify(image)
 
 
 
