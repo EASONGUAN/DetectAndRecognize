@@ -8,10 +8,11 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
 
+
 class SVM:
 
     def __init__(self, positive_datapaths, negative_datapaths):
-
+        print(positive_datapaths)
         self.positive_datapath = positive_datapaths
         self.negative_datapath = negative_datapaths
         self.hog_extractor = HOGExtractor(64, 12, 8, 2, True)
@@ -21,14 +22,14 @@ class SVM:
 
     def train_svm(self):
 
-        positive = ([],[])
-        negative = ([],[])
-
+        positive = [[],[]]
+        negative = [[],[]]
         for path in self.positive_datapath:
 
             with open(path, 'rb') as handle:
                 temp = pickle.load(handle)
-
+            # print(path)
+            # print(len(temp[0][0]))
             positive[0] += temp[0]
             positive[1] += temp[1]
 
@@ -57,7 +58,8 @@ class SVM:
                                                                           test_size=0.2,
                                                                           random_state=random.randint(1, 100))
 
-        svc = LinearSVC()
+        # svc = LinearSVC()
+        svc = SVC(gamma='scale')
         svc.fit(train_data, train_label)
 
         score = svc.score(test_data, test_label)
@@ -80,12 +82,7 @@ class SVM:
         return result
 
 
-svm = SVM("HogData/positive.pickle", "HogData/scenery.pickle")
-svm.train_svm()
-image = cv2.imread("HAHA.jpg")
-svm.classify(image)
-
-
-
-
-
+# svm = SVM("HogData/positive.pickle", "HogData/scenery.pickle")
+# svm.train_svm()
+# image = cv2.imread("HAHA.jpg")
+# svm.classify(image)
