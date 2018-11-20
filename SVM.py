@@ -1,8 +1,9 @@
-import cv2
-import numpy as np
 from HOGExtractor import HOGExtractor
+
+import numpy as np
 import pickle
 import random
+
 from sklearn.svm import SVC, LinearSVC
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
