@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 from skimage.measure import ransac
 from skimage.transform import ProjectiveTransform
-from HOGExtractor import HOGExtractor
+from HOG_Processor import HOGExtractor
 
 
 
