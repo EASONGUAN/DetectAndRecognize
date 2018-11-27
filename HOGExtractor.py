@@ -75,11 +75,6 @@ class HOGExtractor:
         return output
 
 
-#extractor = HOGExtractor(64, 12, 8, 2, True)
-#image = cv.imread("BBB.png")
-#feature = extractor.get_features(image)
-
-
 
 
 

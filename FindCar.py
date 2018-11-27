@@ -6,7 +6,9 @@ import pickle
 import matplotlib.pyplot as plt
 
 class CarFinder:
+
     def __init__(self, hogExtractor, svm, windowSize, slide_step):
+    	
         self.slide_step = slide_step
         self.svm = svm
         self.hogExtractor = hogExtractor

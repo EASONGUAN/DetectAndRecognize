@@ -4,42 +4,41 @@ from HOGExtractor import HOGExtractor
 import os
 import pickle
 
+def process_dataset(self, data_label, data_path):
 
-class DataProcessor:
+    files = os.listdir(data_path)
 
-    def __init__(self, dataset_path, data_label):
+    output_data = []
+    output_label = []
 
-        self.dataset_path = dataset_path
-        self.data_label = data_label
+    for image_path in files:
 
+        extractor = HOGExtractor(64, 12, 8, 2, True)
 
-    def process_dataset(self):
+        real_path = data_path + "/" + image_path
 
-        files = os.listdir(self.dataset_path)
+        image = cv.imread(real_path)
 
-        output_data = []
-        output_label = []
+        features = extractor.get_features(image)
 
-        for image_path in files:
+        output_data.append(list(features))
 
-            extractor = HOGExtractor(64, 12, 8, 2, True)
+        output_label.append(data_label)
 
-            real_path = self.dataset_path + "/" + image_path
+    output = (output_data, output_label)
 
-            image = cv.imread(real_path)
+    with open("HogData/" + "SIX" + '.pickle', 'wb') as handle:
 
-            features = extractor.get_features(image)
-
-            output_data.append(list(features))
-
-            output_label.append(self.data_label)
-
-        output = (output_data, output_label)
-
-        with open("HogData/" + "SIX" + '.pickle', 'wb') as handle:
-
-            pickle.dump(output, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(output, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-# processor = DataProcessor("cars_train", "positive")
-# processor.process_dataset()
+def draw_box():
+
+	#TODO
+
+
+def draw_label():
+
+	#TODO
+
+def 

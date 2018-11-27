@@ -17,7 +17,7 @@ class MLP:
         self.class2_datapaths = class2_datapaths
         self.class3_datapaths = class3_datapaths
         self.hog_extractor = HOGExtractor(64, 12, 8, 2, True)
-        self.clf = None
+        self.mlp = None
         self.scalar = None
 
 
@@ -25,10 +25,12 @@ class MLP:
         class1 = [[],[]]
         class2 = [[],[]]
         class3 = [[], []]
+
         for path in self.class1_datapaths:
 
             with open(path, 'rb') as handle:
                 temp = pickle.load(handle)
+
             class1[0] += temp[0]
             class1[1] += temp[1]
 
@@ -56,17 +58,11 @@ class MLP:
         class2_label = class2[1]
         class3_label = class3[1]
 
-        # unscale = np.vstack((class1_data, class2_data, class3_data)).astype(np.float64)
         X = np.vstack((class1_data, class2_data, class3_data)).astype(np.float64)
-        # scalar = StandardScaler().fit(unscale)
 
-        # X = scalar.transform(unscale)
         Y = np.asarray(class1_label + class2_label + class3_label)
 
-        train_data, test_data, train_label, test_label = train_test_split(X,
-                                                                          Y,
-                                                                          test_size=0.2,
-                                                                          random_state=random.randint(1, 100))
+        train_data, test_data, train_label, test_label = train_test_split(X, Y, test_size=0.2, random_state=random.randint(1, 100))
 
         clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes = (5, 2), random_state = 1)
         clf.fit(train_data, train_label)
@@ -74,19 +70,15 @@ class MLP:
         score = clf.score(test_data, test_label)
         print("Accuracy:" + str(score * 100.0) + "%")
 
-        self.clf = clf
-        # self.scalar = scalar
+        self.mlp = clf
 
+        return clf
 
     def classify(self, image):
 
         feature = self.hog_extractor.get_features(image)
 
-        # scaled_feature = self.scalar.transform([feature])
-
-        # result = self.clf.predict(scaled_feature)
-
-        result = self.clf.predict([feature])
+        result = self.mlp.predict([feature])
 
         print(result)
 
@@ -101,6 +93,3 @@ if __name__ == '__main__':
 
     mlp = MLP(class1_datapaths, class2_datapaths, class3_datapaths)
     mlp.train_mlp()
-    #
-    # image = cv.imread("5.jpg")
-    # mlp.classify(image)
