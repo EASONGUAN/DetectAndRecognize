@@ -1,64 +1,149 @@
 import pickle
-from keras.models import Sequential
-from keras.layers import Convolution2D
-from keras.layers import MaxPooling2D
-from keras.layers import Flatten
-from keras.layers import Dense
-from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.preprocessing.image import ImageDataGenerator
+from keras import optimizers
+from keras.models import Sequential
+from keras.layers import Dropout, Flatten, Dense, Activation
+from keras.layers.convolutional import Convolution2D, MaxPooling2D
+from keras import callbacks
+from keras.applications.vgg16 import VGG16
 from keras.preprocessing import image
-from keras.optimizers import SGD
-import numpy as np
-from keras.applications import VGG19
+from keras.applications.vgg16 import preprocess_input
+from keras.layers import Input, Flatten, Dense
+from keras.models import Model
+from keras.preprocessing.image import ImageDataGenerator
+from keras.optimizers import SGD, RMSprop
+import matplotlib.pyplot as plt
 
-conv_network = VGG19(include_top=False, weights='imagenet', input_shape=(64, 64, 3))
+def train_cnn_with_vgg16():
 
-# Freeze the layers except the last 4 layers
-for layer in conv_network.layers[:-4]:
-    layer.trainable = False
+	img_width, img_height = 64,64
+	batch_size = 16
+	samples_per_epoch = 2500
+	epochs = 25
+	validation_steps = 300
+	nb_filters1 = 32
+	nb_filters2 = 64
+	conv1_size = 3
+	conv2_size = 2
+	pool_size = 2
+	classes_num = 6
+	lr = 0.0004
+	​
+	model_vgg16_conv = VGG16(weights='imagenet', include_top=False)
+	model_vgg16_conv.summary()
+	​
+	input = Input(shape=(64,64,3),name = 'image_input')
+	​
+	output_vgg16_conv = model_vgg16_conv(input)
+	​
+	x = Flatten(name='flatten')(output_vgg16_conv)
+	x = Dense(512, activation='relu', name='fc1')(x)
+	x = Dense(512, activation='relu', name='fc2')(x)
+	x = Dense(6, activation='softmax', name='predictions')(x)
+	​
+	classifier = Model(input=input, output=x)
+	​
+	classifier.summary()
+	​
+	sdg = SGD(lr=0.01, clipnorm=1.)
+	classifier.compile(loss='categorical_crossentropy', optimizer=sdg, metrics=['accuracy'])
+	​
+	train_datagen = ImageDataGenerator(
+	    rescale=1. / 255,
+	    shear_range=0.2,
+	    zoom_range=0.2,
+	    horizontal_flip=True)
+	​
+	test_datagen = ImageDataGenerator(rescale=1. / 255)
+	​
+	train_generator = train_datagen.flow_from_directory(
+	  "TRAIN2",
+	  target_size=(img_height, img_width),
+	  batch_size=batch_size,
+	  class_mode='categorical')
+	​
+	validation_generator = test_datagen.flow_from_directory(
+	  "TEST2",
+	  target_size=(img_height, img_width),
+	  batch_size=batch_size,
+	  class_mode='categorical')
+	​
+	history = classifier.fit_generator(
+	  train_generator,
+	  samples_per_epoch = samples_per_epoch,
+	  epochs=epochs,
+	  validation_data=validation_generator,
+	  validation_steps=validation_steps)
 
-classifier = Sequential()
-classifier.add(Convolution2D(32, kernel_size=(3, 3),padding='same',input_shape=(64, 64, 3)))
-classifier.add(Activation('relu'))
-classifier.add(Convolution2D(64, (3, 3)))
-classifier.add(Activation('relu'))
-classifier.add(MaxPooling2D(pool_size=(2, 2)))
-classifier.add(Dropout(0.25))
+	return classifier, history
 
-classifier.add(Convolution2D(64,(3, 3), padding='same'))
-classifier.add(Activation('relu'))
-classifier.add(Convolution2D(64, 3, 3))
-classifier.add(Activation('relu'))
-classifier.add(MaxPooling2D(pool_size=(2, 2)))
-classifier.add(Dropout(0.25))
+def train_new_cnn():
 
-classifier.add(Flatten())
-classifier.add(Dense(512))
-classifier.add(Activation('relu'))
-classifier.add(Dropout(0.5))
-classifier.add(Dense(4))
-classifier.add(Activation('softmax'))
+	img_width, img_height = 64, 64
+	batch_size = 16
+	samples_per_epoch = 2500
+	epochs = 25
+	validation_steps = 300
+	nb_filters1 = 32
+	nb_filters2 = 64
+	conv1_size = 3
+	conv2_size = 2
+	pool_size = 2
+	classes_num = 6
+	lr = 0.0004
 
-sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
-classifier.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
+	classifier = Sequential()
+	classifier.add(Convolution2D(32, kernel_size=(3, 3),padding='same',input_shape=(64, 64, 3)))
+	classifier.add(Activation('relu'))
+	classifier.add(Convolution2D(64, (3, 3)))
+	classifier.add(Activation('relu'))
+	classifier.add(MaxPooling2D(pool_size=(2, 2)))
+	classifier.add(Dropout(0.25))
 
-train_datagen = ImageDataGenerator(rescale = 1./255, shear_range = 0.2, zoom_range = 0.2, horizontal_flip = True)
-test_datagen = ImageDataGenerator(rescale = 1./255)
+	classifier.add(Convolution2D(64,(3, 3), padding='same'))
+	classifier.add(Activation('relu'))
+	classifier.add(Convolution2D(64, 3, 3))
+	classifier.add(Activation('relu'))
+	classifier.add(MaxPooling2D(pool_size=(2, 2)))
+	classifier.add(Dropout(0.25))
 
-training_set = train_datagen.flow_from_directory('KERAS', target_size = (64, 64), batch_size = 32, class_mode = 'categorical')
-test_set = test_datagen.flow_from_directory('HEHE', target_size = (64, 64), batch_size = 32, class_mode = 'categorical')
+	classifier.add(Flatten())
+	classifier.add(Dense(512))
+	classifier.add(Activation('relu'))
+	classifier.add(Dropout(0.5))
+	classifier.add(Dense(6))
+	classifier.add(Activation('softmax'))
 
-print(training_set.filenames)
+	classifier.compile(loss='categorical_crossentropy',
+	              optimizer=optimizers.RMSprop(lr=lr),
+	              metrics=['accuracy'])
 
-classifier.fit_generator(training_set, steps_per_epoch = 8000, epochs = 5, validation_data = test_set, validation_steps = 2000)
+	train_datagen = ImageDataGenerator(
+	    rescale=1. / 255,
+	    shear_range=0.2,
+	    zoom_range=0.2,
+	    horizontal_flip=True)
 
-with open('classifier.pickle', 'wb') as handle:
-    pickle.dump(classifier, handle, protocol=pickle.HIGHEST_PROTOCOL)
+	test_datagen = ImageDataGenerator(rescale=1. / 255)
 
-test_image = image.load_img('00001.jpg', target_size = (64, 64))
+	train_generator = train_datagen.flow_from_directory(
+	  "TRAIN2",
+	  target_size=(img_height, img_width),
+	  batch_size=batch_size,
+	  class_mode='categorical')
 
-test_image = image.img_to_array(test_image)
-test_image = np.expand_dims(test_image, axis = 0)
-result = classifier.predict(test_image)
+	validation_generator = test_datagen.flow_from_directory(
+	  "TEST2",
+	  target_size=(img_height, img_width),
+	  batch_size=batch_size,
+	  class_mode='categorical')
 
-print(result)
+	history = classifier.fit_generator(
+	  train_generator,
+	  samples_per_epoch = samples_per_epoch,
+	  epochs=epochs,
+	  validation_data=validation_generator,
+	  validation_steps=validation_steps)
+
+	return classifier, history
+
