@@ -84,6 +84,7 @@ class CNN:
 		  validation_steps=validation_steps)
 
 		self.vgg = classifier
+
 		return classifier, history
 
 	def train_new_cnn():
@@ -155,5 +156,6 @@ class CNN:
 		  validation_steps=validation_steps)
 
 		self.cnn = classifier
+		
 		return classifier, history
 
