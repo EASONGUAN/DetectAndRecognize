@@ -1,6 +1,6 @@
 import cv2 as cv
 import numpy as np
-from HOGExtractor import HOGExtractor
+from HOG_Processor import HOGExtractor
 import os
 import pickle
 

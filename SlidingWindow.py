@@ -1,4 +1,4 @@
-from HOGExtractor import HOGExtractor
+from HOG_Processor import HOGExtractor
 
 import numpy as np
 import cv2 as cv
