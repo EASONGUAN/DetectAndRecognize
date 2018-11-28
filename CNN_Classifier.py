@@ -29,13 +29,6 @@ class CNN:
 		samples_per_epoch = 2500
 		epochs = 25
 		validation_steps = 300
-		nb_filters1 = 32
-		nb_filters2 = 64
-		conv1_size = 3
-		conv2_size = 2
-		pool_size = 2
-		classes_num = 6
-		lr = 0.0004
 
 		model_vgg16_conv = VGG16(weights='imagenet', include_top=False)
 		model_vgg16_conv.summary()
@@ -94,13 +87,6 @@ class CNN:
 		samples_per_epoch = 2500
 		epochs = 25
 		validation_steps = 300
-		nb_filters1 = 32
-		nb_filters2 = 64
-		conv1_size = 3
-		conv2_size = 2
-		pool_size = 2
-		classes_num = 6
-		lr = 0.0004
 
 		classifier = Sequential()
 		classifier.add(Convolution2D(32, kernel_size=(3, 3),padding='same',input_shape=(64, 64, 3)))
@@ -125,7 +111,7 @@ class CNN:
 		classifier.add(Activation('softmax'))
 
 		classifier.compile(loss='categorical_crossentropy',
-					  optimizer=optimizers.RMSprop(lr=lr),
+					  optimizer=optimizers.RMSprop(lr=0.0004),
 					  metrics=['accuracy'])
 
 		train_datagen = ImageDataGenerator(
