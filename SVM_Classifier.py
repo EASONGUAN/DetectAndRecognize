@@ -110,7 +110,7 @@ class SVM:
         self.linearSvc = linear_svc
         self.scaler = scaler
 
-        return linearSvc, scaler
+        return linear_svc, scaler
 
 
     def classify(self, image, mode):
@@ -119,12 +119,6 @@ class SVM:
 
         scaled_feature = self.scaler.transform([feature])
 
-        if mode == 'svc':
+        if mode == 'svc': return self.svc.predict(scaled_feature)
 
-        	result = self.svc.predict(scaled_feature)
-
-        elif mode == 'linearSvc':
-
-        	result = self.linearSvc.predict(scaled_feature)
-
-        return result
+        elif mode == 'linearSvc': return self.linearSvc.predict(scaled_feature)

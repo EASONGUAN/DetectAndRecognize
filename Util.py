@@ -25,6 +25,7 @@ def process_dataset(self, data_label, data_path):
 
         output_label.append(data_label)
 
+
     output = (output_data, output_label)
 
     with open("HogData/" + "SIX" + '.pickle', 'wb') as handle:
@@ -33,12 +34,7 @@ def process_dataset(self, data_label, data_path):
 
 
 def draw_box():
-
-	#TODO
-
+    return
 
 def draw_label():
-
-	#TODO
-
-def 
+    return
