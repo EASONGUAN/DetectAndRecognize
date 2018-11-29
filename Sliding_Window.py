@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 
 class CarFinder:
 
+
     def __init__(self, hogExtractor, svm, windowSize, slide_step):
     	
         self.slide_step = slide_step
@@ -14,7 +15,8 @@ class CarFinder:
         self.hogExtractor = hogExtractor
         self.windowSize = windowSize
 
-    def find_car(self, file_name):
+
+    def find_car(self, file_name, mode):
 
         img = cv.imread(file_name)
 
@@ -22,7 +24,6 @@ class CarFinder:
         # windowSizeY = int (img.shape[0] / 8)
         windowSizeX = self.windowSize
         windowSizeY = self.windowSize
-
 
         valid_windows = []
         valid_image= []
@@ -33,13 +34,13 @@ class CarFinder:
                 x = (bottom_left_x - windowSizeX, bottom_left_x)
                 y = (bottom_left_y - windowSizeY, bottom_left_y)
 
-                if self.window_classfy( x, y, img):
+                if self.window_classfy( x, y, img, mode):
                     valid_windows.append([x[0], x[1], y[0], y[1]])
                     # only get the first image
                     box_img = np.copy(img)[y[0]:y[1], x[0]:x[1], :]
                     valid_image.append(box_img)
 
-        with open("HogData/validWindows" + '.pickle', 'wb') as handle:
+        with open("HogData/validWindows_" + mode + '.pickle', 'wb') as handle:
             pickle.dump(valid_windows, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
         num = 0
@@ -51,38 +52,17 @@ class CarFinder:
         print('finished')
 
 
-    def window_classfy(self, x, y, img):
+    def window_classfy(self, x, y, img, mode):
 
         img = np.copy(img)[y[0]:y[1], x[0]:x[1], :]
 
-        if svm.classify(img) == ['positive']:
-            return 1
-        else:
-            return 0
+        return self.svm.classify(img, mode)
 
 
-    def find_center(self, original_img, data_file, threshold, e, size):
+    def find_group(self, original_img, data_file):
         with open(data_file, 'rb') as handle:
             validWindows = pickle.load(handle)
-
-        final_boxes = cv.groupRectangles(validWindows, threshold,  e)
-        print(final_boxes)
-
-        img = cv.imread(original_img)
-
-        num = 0
-        for box in final_boxes[0]:
-            # box_img = np.copy(img)[box[2]:box[3], box[0]:box[1], :]
-            box_img = np.copy(img)[max(0, box[2]) - size:box[3] + size, max(0, box[0] - size):box[1] + size, :]
-
-            cv.imwrite('results/' + str(num) + '_final.jpg', box_img)
-
-            num += 1
-
-    def find_center2(self, original_img, data_file):
-        with open(data_file, 'rb') as handle:
-            validWindows = pickle.load(handle)
-
+        print(validWindows)
         img = cv.imread(original_img)
 
         windowSizeX = int(img.shape[1] / 6)
@@ -105,13 +85,10 @@ class CarFinder:
 
         print(len(clusters))
         clusters = clusters[0]
-        # only get the first image
         result = np.copy(img)[clusters[2]:clusters[3], clusters[0]:clusters[1], :]
         # result = np.copy(img)[clusters[2] + int(windowSizeY / 2):clusters[3] - int(windowSizeY / 2),
         #          clusters[0] + int(windowSizeX / 2):clusters[1] - int(windowSizeX / 2), :]
-        cv.imwrite('./results2/detected_car.jpg', result)
-        # plt.imshow(result)
-        # plt.show()
+        cv.imwrite('results2/' + original_img + '.jpg', result)
 
 
 # # Train SVM
@@ -125,11 +102,11 @@ class CarFinder:
 #     pickle.dump(svm, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 # Find vehicle fragmentation
-image_file = '9.jpeg'
-with open("HogData/svm" + '.pickle', 'rb') as handle:
-    svm = pickle.load(handle)
-extractor = HOGExtractor(64, 12, 8, 2, True)
-carFinder = CarFinder(extractor,svm, 125, 16)
+# image_file = '9.jpeg'
+# with open("HogData/svm" + '.pickle', 'rb') as handle:
+#     svm = pickle.load(handle)
+# extractor = HOGExtractor(64, 12, 8, 2, True)
+# carFinder = CarFinder(extractor,svm, 125, 16)
 # carFinder.find_car(image_file)
 
 # Combine the fragmentation into a whole vehicle image
@@ -141,7 +118,7 @@ carFinder = CarFinder(extractor,svm, 125, 16)
 # e = 0.2
 # size = 50
 # carFinder.find_center(image_file, 'HogData/validWindows.pickle', threshold, e, size)
-carFinder.find_center2(image_file, 'HogData/validWindows.pickle')
+# carFinder.find_group(image_file, 'HogData/validWindows.pickle')
 
 
 
