@@ -9,6 +9,7 @@ from SIFT_Classifier import SIFT
 from SVM_Classifier import SVM
 from MLP_Classifier import MLP
 from Util import process_dataset, draw_box
+from CNN_Classifier import CNN
 
 
 def main(image_file):
@@ -56,6 +57,14 @@ def main(image_file):
     detected_linearSvc = draw_box(image_file, linearSvc_clusters)
     cv.imwrite('results2/detected_svc.jpg', detected_svc)
     cv.imwrite('results2/detected_linearSvc.jpg', detected_linearSvc)
+
+    #Start training CNN
+    cnn = CNN("train","test")
+    vgg_16_cnn = cnn.train_cnn_with_vgg16()
+    small_vgg_cnn = cnn.train_new_cnn()
+
+    #classify the detected images
+
 
 if __name__ == '__main__':
     main('./Visualize/1.jpeg')

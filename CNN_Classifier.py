@@ -16,10 +16,12 @@ import matplotlib.pyplot as plt
 
 class CNN:
 
-	def __init__(self):
+	def __init__(self, train_path, test_path):
 
 		self.cnn = None
 		self.vgg = None
+		self.train = train_path
+		self.test = test_path
 
 
 	def train_cnn_with_vgg16(self):
@@ -58,13 +60,13 @@ class CNN:
 		test_datagen = ImageDataGenerator(rescale=1. / 255)
 
 		train_generator = train_datagen.flow_from_directory(
-		  "TRAIN2",
+		  self.train,
 		  target_size=(img_height, img_width),
 		  batch_size=batch_size,
 		  class_mode='categorical')
 
 		validation_generator = test_datagen.flow_from_directory(
-		  "TEST2",
+		  self.test,
 		  target_size=(img_height, img_width),
 		  batch_size=batch_size,
 		  class_mode='categorical')
@@ -123,13 +125,13 @@ class CNN:
 		test_datagen = ImageDataGenerator(rescale=1. / 255)
 
 		train_generator = train_datagen.flow_from_directory(
-		  "TRAIN2",
+		  self.train,
 		  target_size=(img_height, img_width),
 		  batch_size=batch_size,
 		  class_mode='categorical')
 
 		validation_generator = test_datagen.flow_from_directory(
-		  "TEST2",
+		  self.test,
 		  target_size=(img_height, img_width),
 		  batch_size=batch_size,
 		  class_mode='categorical')
