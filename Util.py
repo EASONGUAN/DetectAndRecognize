@@ -4,7 +4,7 @@ from HOG_Processor import HOGExtractor
 import os
 import pickle
 
-def process_dataset(self, data_label, data_path):
+def process_dataset(data_label, data_path):
 
     files = os.listdir(data_path)
 
@@ -28,13 +28,19 @@ def process_dataset(self, data_label, data_path):
 
     output = (output_data, output_label)
 
-    with open("HogData/" + "SIX" + '.pickle', 'wb') as handle:
+    name = "positive" if data_label == 1 else "negative"
+
+    with open("HogData/" + name + '.pickle', 'wb') as handle:
 
         pickle.dump(output, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
-def draw_box():
-    return
+def draw_box(image_file, valid_windows):
+    img = cv.imread(image_file)
+    for window in valid_windows:
+        cv.rectangle(img, (window[0], window[2]), (window[1], window[3]), (0, 0, 255), 2)
+    return img
+
 
 def draw_label():
     return
