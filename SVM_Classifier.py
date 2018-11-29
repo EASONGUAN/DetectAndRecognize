@@ -119,6 +119,10 @@ class SVM:
 
         scaled_feature = self.scaler.transform([feature])
 
-        if mode == 'svc': return self.svc.predict(scaled_feature)
+        result = None
 
-        elif mode == 'linearSvc': return self.linearSvc.predict(scaled_feature)
+        if mode == 'svc': result = 1 if self.svc.predict(scaled_feature) == 'positive' else 0
+
+        elif mode == 'linearSvc': result = 1 if  self.linearSvc.predict(scaled_feature) == 'positive' else 0
+
+        return result
