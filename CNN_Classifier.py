@@ -1,3 +1,4 @@
+import os
 import pickle
 from keras.preprocessing.image import ImageDataGenerator
 from keras import optimizers
@@ -13,6 +14,7 @@ from keras.models import Model
 from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import SGD, RMSprop
 import matplotlib.pyplot as plt
+import numpy as np
 
 class CNN:
 
@@ -23,6 +25,16 @@ class CNN:
 		self.train = train_path
 		self.test = test_path
 
+		classes = []
+		for file in os.listdir(train_path):
+			classes.append(file)
+		classes.sort()
+
+		class_dict = {}
+		for i in range(len(classes)):
+			class_dict[i] = classes[i]
+
+		self.classes = class_dict
 
 	def train_cnn_with_vgg16(self):
 
@@ -146,4 +158,10 @@ class CNN:
 		self.cnn = classifier
 
 		return classifier, history
+
+
+	def classify(self, image):
+
+		return self.vgg.predict(image)
+
 

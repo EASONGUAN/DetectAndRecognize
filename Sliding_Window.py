@@ -14,6 +14,8 @@ class CarFinder:
         self.svm = svm
         self.hogExtractor = hogExtractor
         self.windowSize = windowSize
+        self.detected_window = None
+        self.detected_car = None
 
 
     def find_car(self, file_name, mode):
@@ -37,6 +39,8 @@ class CarFinder:
                     box_img = np.copy(img)[y[0]:y[1], x[0]:x[1], :]
                     valid_image.append(box_img)
 
+        self.detected_window = valid_windows
+
         with open("HogData/validWindows_" + mode + '.pickle', 'wb') as handle:
             pickle.dump(valid_windows, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
@@ -56,7 +60,10 @@ class CarFinder:
         return self.svm.classify(img, mode)
 
 
-    def find_group(self, original_img, data_file):
+    def find_group(self, file_name, data_file):
+
+        img = cv.imread(file_name)
+
         with open(data_file, 'rb') as handle:
             validWindows = pickle.load(handle)
 
@@ -72,8 +79,14 @@ class CarFinder:
                     cluster[2] = min(cluster[2], rect[2])
                     cluster[3] = max(cluster[3], rect[3])
 
-            if (not matched):
+            if not matched:
                 clusters.append(rect)
 
-        print(clusters)
-        return clusters
+        detected = []
+        for cluster in clusters:
+            image = np.copy(img)[cluster[2]:cluster[3], cluster[0]:cluster[1],:]
+            detected.append(image)
+            cv.imwrite("haha.jpg",np.array(image))
+
+        return clusters, detected
+
