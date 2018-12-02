@@ -9,7 +9,13 @@ class CarFinder:
 
 
     def __init__(self, hogExtractor, svm, windowSize, slide_step):
-    	
+        """
+
+        :param hogExtractor: the given hog extractor
+        :param svm: support vector machine for classification, either linear SVC or SVC
+        :param windowSize: size of the sliding winodw
+        :param slide_step: number of pixel to move per sliding window
+        """
         self.slide_step = slide_step
         self.svm = svm
         self.hogExtractor = hogExtractor
@@ -19,7 +25,11 @@ class CarFinder:
 
 
     def find_car(self, file_name, mode):
+        """
 
+        :param file_name: file to the test image
+        :param mode: : LinearSvc or SVC
+        """
         img = cv.imread(file_name)
 
         windowSizeX = self.windowSize
@@ -49,24 +59,34 @@ class CarFinder:
             cv.imwrite('results/' + str(num) + '.jpg', i)
             num += 1
 
-        print(len(valid_windows))
-        print('finished')
-
 
     def window_classfy(self, x, y, img, mode):
+        """
 
+        :param x: top left corner coordinate
+        :param y: bottom right corner coordinate
+        :param img: test image
+        :param mode: LinearSVC or SVC
+        :return:
+        """
         img = np.copy(img)[y[0]:y[1], x[0]:x[1], :]
 
         return self.svm.classify(img, mode)
 
 
     def find_group(self, file_name, data_file):
+        """
 
+        :param file_name: path to the test image
+        :param data_file: path to the stored detection data
+        :return:
+        """
         img = cv.imread(file_name)
 
         with open(data_file, 'rb') as handle:
             validWindows = pickle.load(handle)
 
+        print(validWindows)
         clusters = []
         for rect in validWindows:
             matched = 0
@@ -78,15 +98,21 @@ class CarFinder:
                     cluster[1] = max(cluster[1], rect[1])
                     cluster[2] = min(cluster[2], rect[2])
                     cluster[3] = max(cluster[3], rect[3])
+                    cluster[4] += 1
 
             if not matched:
+
+                rect.append(1)
                 clusters.append(rect)
 
         detected = []
-        for cluster in clusters:
-            image = np.copy(img)[cluster[2]:cluster[3], cluster[0]:cluster[1],:]
-            detected.append(image)
-            cv.imwrite("haha.jpg",np.array(image))
+        final_clusters = []
 
-        return clusters, detected
+        for cluster in clusters:
+            if cluster[4] > 3:
+                image = np.copy(img)[cluster[2]:cluster[3], cluster[0]:cluster[1],:]
+                detected.append(image)
+                final_clusters.append(cluster)
+
+        return final_clusters, detected
 

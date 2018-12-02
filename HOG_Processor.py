@@ -1,11 +1,18 @@
 import cv2 as cv
 import numpy as np
 from skimage.feature import hog
-import matplotlib.pyplot as plt
 
 class HOGExtractor:
 
     def __init__(self, box_size, orientation, pixel_per_cell, cells_per_block, do_trans_sqrt):
+        """
+
+        :param box_size: patch size for each image
+        :param orientation: number of orientation bin
+        :param pixel_per_cell: number of pixel per cell
+        :param cells_per_block: number of cells per block during block normalization
+        :param do_trans_sqrt: do trans square root if true
+        """
 
         self.box_size = (box_size, box_size)
         self.orientation = orientation
@@ -19,7 +26,11 @@ class HOGExtractor:
 
 
     def HOG(self, image):
+        """
 
+        :param image: input image
+        :return: a dictionary with hog feature vector and visualization of the input image
+        """
         image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
 
         hue = image[:,:,0]
@@ -57,7 +68,7 @@ class HOGExtractor:
         output = {'hue_hog': np.reshape(hue_features, -1),
                   'saturation_hog': np.reshape(saturation_features, -1),
                   'lightness_hog': np.reshape(lightness_features, -1),
-                  'hue_hog_img': lightness_feature_image,
+                  'hue_hog_img': hue_feature_image,
                   'saturation_hog_img': saturation_feature_image,
                   'lightness_hog_img': lightness_feature_image}
 
@@ -65,7 +76,11 @@ class HOGExtractor:
 
 
     def get_features(self, image):
+        """
 
+        :param image: input image
+        :return: one dimension numpy array of HOG feature of input image
+        """
         feature = self.HOG(image)
 
         output = np.hstack((feature['hue_hog'],
@@ -73,8 +88,6 @@ class HOGExtractor:
                             feature['lightness_hog']))
 
         return output
-
-
 
 
 
