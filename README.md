@@ -8,3 +8,12 @@ Non-Vehicle Images : https://s3.amazonaws.com/udacity-sdc/Vehicle_Tracking/non-v
 Dataset for Vehicle Classification: \
 VMMR Dataset : http://vmmrdb.cecsresearch.org/ \
 Stanford Car Dataset : https://ai.stanford.edu/~jkrause/cars/car_dataset.html 
+
+Required library to run the code: \
+OpenCV \
+Tensorflow \
+Keras \
+Scikit-Learn \
+Scikit-Image \
+Matplotlib \
+Numpy \
