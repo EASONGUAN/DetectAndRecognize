@@ -49,6 +49,7 @@ class CNN:
 		model_vgg16_conv = VGG16(weights='imagenet', include_top=False)
 		model_vgg16_conv.summary()
 		
+		# Freeze the layers except the last 4 layers
 		for layer in model_vgg16_conv.layers[:-4]:
     			layer.trainable = False
 
