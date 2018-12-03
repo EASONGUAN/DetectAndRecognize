@@ -10,20 +10,9 @@ from HOG_Processor import HOGExtractor
 
 class SIFT:
 
-    def __init__(self, class1, class2, class3, class4, types, ratio):
+    def __init__(self, classes, types, ratio):
         # Initialize the four standard car models.
-        self.class1_f = class1[0]
-        self.class1_b = class1[1]
-
-        self.class2_f = class2[0]
-        self.class2_b = class2[1]
-
-        self.class3_f = class3[0]
-        self.class3_b = class3[1]
-
-        self.class4_f = class4[0]
-        self.class4_b = class4[1]
-
+        self.classes = classes
         self.types = types
         self.ratio = ratio
 
@@ -101,11 +90,8 @@ class SIFT:
     def classify(self, image):
         num_inliers = []
 
-        num_inliers.append(self.ransac_h(image, self.class1_f) + self.ransac_h(image, self.class1_b))
-        num_inliers.append(self.ransac_h(image, self.class2_f) + self.ransac_h(image, self.class2_b))
-        num_inliers.append(self.ransac_h(image, self.class3_f) + self.ransac_h(image, self.class3_b))
-        num_inliers.append(self.ransac_h(image, self.class4_f) + self.ransac_h(image, self.class4_b))
-
+        for c in self.classes:
+            num_inliers.append(self.ransac_h(image, c[0]) + self.ransac_h(image, c[1]))
         num_inliers = np.array(num_inliers)
         index = np.argmax(num_inliers)
 
@@ -120,14 +106,15 @@ if __name__ == '__main__':
     class2 = ['./siftTest/5-f.jpg', './siftTest/5-b.jpg']
     class3 = ['./siftTest/3-f.jpg', './siftTest/3-b.jpg']
     class4 = ['./siftTest/6-f.jpg', './siftTest/6-b.jpg']
+    classes = [class1, class2, class3, class4]
     types = ['Audi A5', 'Jeep Wrangler', 'BMW 2-SERIES', 'MERCEDES-BENZ CLA-CLASS']
-
+    #
     ratio = 0.9
     image = 'detected_car.jpg'
+    #
+    sift =  SIFT(classes, types, ratio)
 
-    sift =  SIFT(class1, class2, class3, class4, types, ratio)
-
-    # plt.imshow(sift.get_matches(image, class2[1], ratio))
+    # plt.imshow(sift.get_matches(image, class4[0], ratio))
     # plt.show()
 
     print(sift.classify(image))
