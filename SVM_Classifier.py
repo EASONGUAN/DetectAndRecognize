@@ -12,7 +12,7 @@ class SVM:
         """
 
         :param positive_datapaths: path to positive data sadasdsadasdasdadasda
-        :param negative_datapaths: path to negative data
+        :param negative_datapaths: path to negative data aaaaaaaaaaaaaaaaaaaaa
         """
         print(positive_datapaths)
         self.positive_datapath = positive_datapaths
@@ -143,5 +143,6 @@ class SVM:
         if mode == 'svc': result = 1 if self.svc.predict(scaled_feature) == 'positive' else 0
 
         elif mode == 'linearSvc': result = 1 if  self.linearSvc.predict(scaled_feature) == 'positive' else 0
-
+	
+	print("aaaaaaaaaaaaaaaaaaa")
         return result
