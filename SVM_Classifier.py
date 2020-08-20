@@ -11,7 +11,7 @@ class SVM:
     def __init__(self, positive_datapaths, negative_datapaths):
         """
 
-        :param positive_datapaths: path to positive data
+        :param positive_datapaths: path to positive data sadasdsadasdasdadasda
         :param negative_datapaths: path to negative data
         """
         print(positive_datapaths)
