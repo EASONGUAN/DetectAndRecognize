@@ -114,7 +114,8 @@ if __name__ == '__main__':
     #
     sift =  SIFT(classes, types, ratio)
 
-    # plt.imshow(sift.get_matches(image, class4[0], ratio))
-    # plt.show()
+    plt.imshow(sift.get_matches(image, class4[0], ratio))
+    plt.show()
 
     print(sift.classify(image))
+    print("finished")
