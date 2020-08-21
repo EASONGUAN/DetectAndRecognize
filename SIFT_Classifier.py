@@ -31,6 +31,8 @@ class SIFT:
         kp1, des1 = sift.detectAndCompute(img1, None)
         kp2, des2 = sift.detectAndCompute(img2, None)
 
+	print("aaaaaaaaaaaaaaaa")
+
         # Get matches and sort by the distance
         bfm = cv.BFMatcher()
         matches = bfm.knnMatch(des1, des2, k=2)
