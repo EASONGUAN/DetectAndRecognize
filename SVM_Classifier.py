@@ -144,5 +144,5 @@ class SVM:
 
         elif mode == 'linearSvc': result = 1 if  self.linearSvc.predict(scaled_feature) == 'positive' else 0
 	
-	print("aaaaaaaaaaaaaaaaaaa")
+	print("bbb")
         return result
