@@ -61,6 +61,7 @@ class SVM:
         # Normalize the input data
         X = scaler.transform(unscale)
         Y = np.asarray(positive_label + negative_label)
+	print("pppp")
 
         train_data, test_data, train_label, test_label = train_test_split(X, Y, test_size=0.2, random_state=random.randint(1, 100))
 
